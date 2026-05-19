@@ -23,16 +23,23 @@ pub fn array(
     const attack_samples_mod: isize = @as(comptime_float, @floatFromInt(attack_samples)) * 0.8;
 
     for (0..length) |i| {
-        const t: T = @floatFromInt(i / self.sample_rate);
+        // Cast values to float before arithmetic operations to prevent underflow
+        const i_f = @as(T, @floatFromInt(i));
+        const attack_samples_f = @as(T, @floatFromInt(attack_samples));
+        const attack_samples_mod_f = @as(T, @floatFromInt(attack_samples_mod));
+        const length_f = @as(T, @floatFromInt(length));
+
+        const t: T = i_f / @as(T, @floatFromInt(self.sample_rate));
+
         const a_env: T = if (i < attack_samples)
-            @floatFromInt(@divExact(i, attack_samples))
+            i_f / attack_samples_f
         else
-            1.0 - @as(T, @floatFromInt(((i - attack_samples) / (length - attack_samples))));
+            1.0 - (i_f - attack_samples_f) / (length_f - attack_samples_f);
 
         const i_env: T = if (i < attack_samples_mod)
-            5.0 * @as(T, @floatFromInt(@divExact(i, attack_samples_mod)))
+            5.0 * (i_f / attack_samples_mod_f)
         else
-            5.0 - 4.0 * @as(T, @floatFromInt(((i - attack_samples) / (length - attack_samples_mod))));
+            5.0 - 4.0 * (i_f - attack_samples_f) / (length_f - attack_samples_mod_f);
 
         const carrier_phase: T = 2.0 * std.math.pi * self.frequency * t;
         const modulator_phase: T = 2.0 * std.math.pi * self.frequency * t;
