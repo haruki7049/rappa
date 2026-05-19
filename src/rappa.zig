@@ -8,6 +8,7 @@ const Self = @This();
 
 frequency: comptime_float,
 sample_rate: comptime_int,
+channels: u16,
 
 pub const Error = error{OutOfMemory};
 
@@ -17,7 +18,7 @@ pub fn array(
     allocator: std.mem.Allocator,
     length: usize,
 ) Self.Error![]T {
-    var result: []T = try allocator.alloc(T, length);
+    var result: []T = try allocator.alloc(T, length * self.channels);
 
     const attack_samples: isize = self.sample_rate * 0.1;
     const attack_samples_mod: isize = @as(comptime_float, @floatFromInt(attack_samples)) * 0.8;
@@ -49,7 +50,12 @@ pub fn array(
         const modulator_phase: T = 2.0 * std.math.pi * self.frequency * t;
 
         // Calculate and store the FM synthesis sample
-        result[i] = a_env * std.math.sin(carrier_phase + i_env * std.math.sin(modulator_phase));
+        const sample = a_env * std.math.sin(carrier_phase + i_env * std.math.sin(modulator_phase));
+
+        // Copy the sample to all channels
+        for (0..self.channels) |ch| {
+            result[i * self.channels + ch] = sample;
+        }
     }
 
     return result;
@@ -62,11 +68,10 @@ pub fn wave(
     length: usize,
 ) Self.Error!lightmix.Wave(T) {
     const samples = try self.array(T, allocator, length);
-    const channels = 1;
     return lightmix.Wave(T){
         .allocator = allocator,
         .samples = samples,
-        .channels = channels,
+        .channels = self.channels,
         .sample_rate = self.sample_rate,
     };
 }
