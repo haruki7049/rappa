@@ -25,5 +25,7 @@ pub fn main() !void {
         .use_fact = false,
         .use_peak = false,
     });
+    try writer.interface.flush();
+
     // try wave.play();
 }
