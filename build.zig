@@ -73,6 +73,13 @@ fn build_example_dir(
                 },
             });
 
+            // Library linking on Linux
+            if (target.result.os.tag == .linux) {
+                example_mod.linkSystemLibrary("alsa", .{});
+                example_mod.linkSystemLibrary("libpulse", .{});
+                example_mod.linkSystemLibrary("libpipewire-0.3", .{});
+            }
+
             const example_exe = b.addExecutable(.{
                 .name = example_exe_name,
                 .root_module = example_mod,
