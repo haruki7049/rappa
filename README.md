@@ -2,6 +2,12 @@
 
 This is a synthesizer library using [haruki7049/lightmix](https://github.com/haruki7049/lightmix).
 
+## How to use
+
+```zig
+// TODO: Write how to use rappa
+```
+
 ## Licensing
 
 This library (`rappa`) is licensed under [CC0 1.0 Universal](./LICENSE).
