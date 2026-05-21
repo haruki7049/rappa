@@ -81,5 +81,6 @@ test {
     _ = Self{
         .frequency = 440.0,
         .sample_rate = 44100,
+        .channels = 1,
     };
 }
