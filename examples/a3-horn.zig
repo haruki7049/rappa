@@ -5,7 +5,12 @@ var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const allocator = gpa.allocator();
 
 pub fn main() !void {
-    const horn = rappa{ .frequency = 220.0, .sample_rate = 44100, .channels = 2 };
+    const horn = rappa{
+        .frequency = 220.0,
+        .sample_rate = 44100,
+        .channels = 2,
+        .adsr = .{ .a = 0.1, .d = 0.1, .s = 0.7, .r = 0.2 },
+    };
     const wave = try horn.wave(f64, allocator, 88200);
 
     // // Writes to a file
