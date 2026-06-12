@@ -17,7 +17,7 @@ sample_rate: comptime_int,
 channels: u16,
 adsr: ADSR,
 
-pub const Error = error{OutOfMemory};
+pub const Error = std.mem.Allocator.Error;
 
 pub fn array(
     self: Self,
