@@ -50,14 +50,15 @@ fn build_example_dir(
     lightmix: *std.Build.Dependency,
     rappa_mod: *std.Build.Module,
 ) !void {
-    var example_dir = try b.build_root.handle.openDir("./examples", .{ .iterate = true });
-    defer example_dir.close();
+    const io = b.graph.io;
+    var example_dir = try b.build_root.handle.openDir(io, "./examples", .{ .iterate = true });
+    defer example_dir.close(io);
 
     var walker = try example_dir.walk(b.allocator);
     defer walker.deinit();
 
     const example_step = b.step("examples", "Build all executables in ./examples");
-    while (try walker.next()) |entry| {
+    while (try walker.next(io)) |entry| {
         if (entry.kind == .file) {
             const filepath = try std.fmt.allocPrint(b.allocator, "examples/{s}", .{entry.path});
             const example_exe_name = entry.basename;
