@@ -1,10 +1,10 @@
 const std = @import("std");
 const rappa = @import("rappa");
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-const allocator = gpa.allocator();
+pub fn main(init: std.process.Init) !void {
+    const allocator = init.arena.allocator();
+    defer init.arena.deinit();
 
-pub fn main() !void {
     const horn = rappa{
         .frequency = 220.0,
         .sample_rate = 44100,
